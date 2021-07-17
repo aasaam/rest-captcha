@@ -8,12 +8,14 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
+// Storage main storage object
 type Storage struct {
 	mu     sync.Mutex
 	values map[string]uint64
 	expire map[string]int64
 }
 
+// StorageItem is item that store
 type StorageItem struct {
 	ID        string
 	Value     uint64
@@ -23,14 +25,20 @@ type StorageItem struct {
 	Expire    time.Time
 }
 
+// Config application config
 type Config struct {
 	Test bool
 }
 
 const (
+	// LevelMedium default level
 	LevelMedium = 0
-	LevelEasy   = 1
-	LevelHard   = 2
+
+	// LevelEasy less noise and characters
+	LevelEasy = 1
+
+	// LevelHard more noise and characters
+	LevelHard = 2
 )
 
 var (

@@ -15,14 +15,14 @@ import (
 func GetRandomCaptchaFont(lang string) []byte {
 	rand.Seed(time.Now().UnixNano())
 	if lang == "fa" {
-		n := rand.Int() % len(CaptchaFonts_fa)
-		return CaptchaFonts_fa[n]
+		n := rand.Int() % len(CaptchaFontsFa)
+		return CaptchaFontsFa[n]
 	} else if lang == "ar" {
-		n := rand.Int() % len(CaptchaFonts_ar)
-		return CaptchaFonts_ar[n]
+		n := rand.Int() % len(CaptchaFontsAr)
+		return CaptchaFontsAr[n]
 	}
-	n := rand.Int() % len(CaptchaFonts_en)
-	return CaptchaFonts_en[n]
+	n := rand.Int() % len(CaptchaFontsEn)
+	return CaptchaFontsEn[n]
 }
 
 // GenerateCaptcha return captcha number and base64 encoded image

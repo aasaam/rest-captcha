@@ -35,7 +35,7 @@ import (
 """
 
 embed_template = """//go:embed {path}\nvar {embed_var} []byte"""
-var_list_template = """// CaptchaFonts_{lang} list of embed fonts for {lang}\nvar CaptchaFonts_{lang} = [][]byte{{{embed_var}}}"""
+var_list_template = """// CaptchaFonts{lang} list of embed fonts for {lang}\nvar CaptchaFonts{lang} = [][]byte{{{embed_var}}}"""
 lang_index = {}
 embeds = []
 var_list = {}
@@ -57,7 +57,7 @@ for lang in languages:
     source_path = lang_dir + "/" + path.name
     md5_file = execute('md5sum ' + source_path + " | cut -d ' ' -f 1").strip()
     embed_var = lang + '_' + md5_file
-    var_list[lang].append(embed_var)
+
     destination_name = embed_var + '.ttf'
     destination_path = fonts_destination_dir + '/' + destination_name
 
@@ -70,8 +70,12 @@ for lang in languages:
     )
     execute(command)
 
+    embed_var_name = lang + "Font" + str(lang_index[lang])
+
+    var_list[lang].append(embed_var_name)
+
     embeds.append(embed_template.format(
-      embed_var=embed_var,
+      embed_var=embed_var_name,
       path=destination_path.replace(project_path + "/", "")),
     )
     embeds.append("")
@@ -84,7 +88,8 @@ for lang in languages:
 
 var_list_all = []
 for lang, embed_var in var_list.items():
-  var_list_all.append(var_list_template.format(lang=lang,embed_var=",".join(embed_var)))
+  langName = lang[0].upper() + lang[1:]
+  var_list_all.append(var_list_template.format(lang=langName,embed_var=",".join(embed_var)))
   var_list_all.append("")
 
 captcha_fonts = captcha_fonts_template.format(
