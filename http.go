@@ -6,12 +6,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// NewRequest request for new captcha
 type NewRequest struct {
 	Lang  string `json:"lang,omitempty"`
 	TTL   int64  `json:"ttl"`
 	Level string `json:"level,omitempty"`
 }
 
+// NewResponse response of generated captcha
 type NewResponse struct {
 	ID     string `json:"id"`
 	Image  string `json:"image"`
@@ -19,11 +21,13 @@ type NewResponse struct {
 	Value  uint64 `json:"value"`
 }
 
+// SolveRequest solve request
 type SolveRequest struct {
 	ID    string `json:"id"`
 	Value uint64 `json:"value"`
 }
 
+// HTTPNew fiber handler for new captcha
 func HTTPNew(c *fiber.Ctx, config *Config, storage *Storage) error {
 	r := new(NewRequest)
 
@@ -51,6 +55,7 @@ func HTTPNew(c *fiber.Ctx, config *Config, storage *Storage) error {
 	return c.JSON(response)
 }
 
+// HTTPSolve fiber handler for solve captcha
 func HTTPSolve(c *fiber.Ctx, config *Config, storage *Storage) error {
 	p := new(SolveRequest)
 
