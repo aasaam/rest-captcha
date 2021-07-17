@@ -11,7 +11,7 @@
     <a href="https://goreportcard.com/report/github.com/aasaam/rest-captcha"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/aasaam/rest-captcha"></a>
     <a href="https://hub.docker.com/r/aasaam/rest-captcha" target="_blank"><img src="https://img.shields.io/docker/image-size/aasaam/rest-captcha?label=docker%20image" alt="docker" /></a>
     <a href="https://quay.io/repository/aasaam/rest-captcha" target="_blank"><img src="https://img.shields.io/badge/docker%20image-quay.io-blue" alt="quay.io" /></a>
-    <a href="https://aasaam.github.io/nginx-error-log-parser/" target="_blank"><img src="https://github.com/aasaam/rest-captcha/actions/workflows/docs.yml/badge.svg" alt="docs" /></a>
+    <a href="https://github.com/aasaam/rest-captcha/actions/workflows/docs.yml" target="_blank"><img src="https://github.com/aasaam/rest-captcha/actions/workflows/docs.yml/badge.svg" alt="docs" /></a>
     <a href="https://github.com/aasaam/rest-captcha/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/aasaam/rest-captcha"></a>
   </p>
 </div>
