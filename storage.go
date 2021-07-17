@@ -53,7 +53,7 @@ func (s *Storage) NewItem(level int, lang string, ttl int64) *StorageItem {
 	return &item
 }
 
-// Validate
+// Validate id via input value
 func (s *Storage) Validate(id string, value uint64) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -67,6 +67,7 @@ func (s *Storage) Validate(id string, value uint64) bool {
 	return false
 }
 
+// CleanUp remove expired
 func (s *Storage) CleanUp() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -79,6 +80,7 @@ func (s *Storage) CleanUp() {
 	}
 }
 
+// GenerateID return random id for each captcha
 func GenerateID() string {
 	b1 := make([]byte, 32)
 
@@ -96,6 +98,7 @@ func GenerateID() string {
 	return safeStringRegex.ReplaceAllString(base64.StdEncoding.EncodeToString(buf), "")[0:40]
 }
 
+// GenerateProblem generate number problem
 func GenerateProblem(level int) uint64 {
 	var num int
 	var min int
@@ -117,11 +120,13 @@ func GenerateProblem(level int) uint64 {
 	return ConvertStringToUInt64(numberString)
 }
 
+// GetRandomNumber random number between min and max
 func GetRandomNumber(min int, max int) int {
 	math_rand.Seed(time.Now().UnixNano())
 	return math_rand.Intn(max-min) + min
 }
 
+// ConvertStringToUInt64 string to uint64
 func ConvertStringToUInt64(str string) uint64 {
 	value, e := strconv.ParseInt(str, 10, 64)
 	if e != nil {
@@ -130,10 +135,12 @@ func ConvertStringToUInt64(str string) uint64 {
 	return uint64(value)
 }
 
+// ConvertUInt64ToString uint64 to string
 func ConvertUInt64ToString(in uint64) string {
 	return strconv.FormatUint(in, 10)
 }
 
+// GetLevel parse level string
 func GetLevel(str string) int {
 	if str == "1" || strings.ToUpper(str) == "EASY" {
 		return LevelEasy

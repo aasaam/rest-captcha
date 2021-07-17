@@ -3,7 +3,7 @@
     REST Captcha
   </h1>
   <p>
-    Simple in memory multi language captcha generator service
+    Simple in memory multi language captcha generator server
   </p>
   <p>
     <a href="https://gitlab.com/aasaam/rest-captcha/-/pipelines"><img alt="CI Pipeline" src="https://gitlab.com/aasaam/rest-captcha/badges/master/pipeline.svg"></a>
