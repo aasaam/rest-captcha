@@ -34,12 +34,17 @@ func main() {
 
 	var baseURL string
 	flag.StringVar(&baseURL, "base-url", "/", "Base URL for routes")
-	baseURL = strings.TrimRight(baseURL, "/")
 
 	var listen string
 	flag.StringVar(&listen, "listen", "0.0.0.0:4000", "Application listen address")
 
-	config.Test = *flag.Bool("test", false, "Test m")
+	testMode := flag.Bool("test", false, "Test m")
+
+	flag.Parse()
+
+	config.Test = *testMode
+
+	baseURL = strings.TrimRight(baseURL, "/")
 
 	promRegistry := prometheus.NewRegistry()
 	promRegistry.MustRegister(PrometheusStorageCount)
@@ -50,7 +55,7 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
-		Prefork:               true,
+		Prefork:               false,
 		UnescapePath:          true,
 		CaseSensitive:         true,
 		StrictRouting:         true,

@@ -57,11 +57,13 @@ func (s *Storage) NewItem(level int, lang string, ttl int64) *StorageItem {
 func (s *Storage) Validate(id string, value uint64) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if exp, ok := s.expire[id]; ok && exp >= time.Now().Unix() && s.values[id] == value {
-		delete(s.expire, id)
-		delete(s.values, id)
-		PrometheusValidTotal.Inc()
-		return true
+	if exp, ok := s.expire[id]; ok {
+		if exp >= time.Now().Unix() && s.values[id] == value {
+			delete(s.expire, id)
+			delete(s.values, id)
+			PrometheusValidTotal.Inc()
+			return true
+		}
 	}
 	PrometheusInValidTotal.Inc()
 	return false

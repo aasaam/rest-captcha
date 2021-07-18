@@ -1,3 +1,5 @@
 # Copyright (c) 2021 aasaam software development group
 coverage.*
 go.sum
+rest-captcha
+rest-captcha*

@@ -57,13 +57,13 @@ func HTTPNew(c *fiber.Ctx, config *Config, storage *Storage) error {
 
 // HTTPSolve fiber handler for solve captcha
 func HTTPSolve(c *fiber.Ctx, config *Config, storage *Storage) error {
-	p := new(SolveRequest)
+	r := new(SolveRequest)
 
-	if err := c.BodyParser(p); err != nil {
+	if err := c.BodyParser(r); err != nil {
 		return err
 	}
 
-	valid := storage.Validate(p.ID, p.Value)
+	valid := storage.Validate(r.ID, r.Value)
 
 	if valid {
 		return c.Status(200).JSON(true)
