@@ -18,7 +18,7 @@ func TestHTTPEndpoint1(t *testing.T) {
 	storage := NewStorage()
 	config := Config{}
 
-	config.Test = true
+	config.ReturnValue = true
 
 	app := fiber.New(fiber.Config{})
 
@@ -99,7 +99,7 @@ func TestHTTPEndpoint2(t *testing.T) {
 	storage := NewStorage()
 	config := Config{}
 
-	config.Test = false
+	config.ReturnValue = false
 
 	app := fiber.New(fiber.Config{})
 

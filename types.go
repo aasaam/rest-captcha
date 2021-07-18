@@ -27,7 +27,7 @@ type StorageItem struct {
 
 // Config application config
 type Config struct {
-	Test bool
+	ReturnValue bool
 }
 
 const (

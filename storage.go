@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/binary"
 	math_rand "math/rand"
 	"regexp"
 	"strconv"
@@ -84,20 +83,14 @@ func (s *Storage) CleanUp() {
 
 // GenerateID return random id for each captcha
 func GenerateID() string {
-	b1 := make([]byte, 32)
-
+	b1 := make([]byte, 16)
 	_, err := rand.Read(b1)
 
 	if err != nil {
 		panic(err.Error())
 	}
 
-	var b2 = make([]byte, 8)
-	binary.BigEndian.PutUint64(b2, uint64(time.Now().UnixNano()))
-
-	buf := append(b2, b1...)
-
-	return safeStringRegex.ReplaceAllString(base64.StdEncoding.EncodeToString(buf), "")[0:40]
+	return safeStringRegex.ReplaceAllString(base64.StdEncoding.EncodeToString(b1), "")[0:12]
 }
 
 // GenerateProblem generate number problem

@@ -46,7 +46,7 @@ func HTTPNew(c *fiber.Ctx, config *Config, storage *Storage) error {
 
 	response := NewResponse{ID: item.ID, Image: image, Expire: item.Expire.Format(time.RFC3339), Value: 0}
 
-	if config.Test {
+	if config.ReturnValue {
 		response.Value = item.Value
 	}
 

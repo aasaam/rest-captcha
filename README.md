@@ -16,9 +16,38 @@
   </p>
 </div>
 
+## Guide
+
+For see available options
+
+```bash
+docker run --rm aasaam/rest-captcha -h
+# will show available options
+```
+
+It's generate captcha image via ID, base64 encoded image and value of captcha:
+
+```bash
+curl -X POST -H 'Content-type: application/json' -d '{"lang":"fa","ttl":30, "level": "1"}' http://rest-captcha:4000/new
+```
+
+```bash
+curl -X POST -H 'Content-type: application/json' -d '{"id":"UNIQUE_IDENTIFIER","value":999999}' http://rest-captcha:4000/solve
+```
+
+## Languages
+
+Currently following language are supported:
+
+- `en` English (It's default/fallback language for invalid language code)
+- `fa` Persian
+- `ar` Arabic
+
 <div>
   <p align="center">
-    <img alt="aasaam software development group" width="64" src="https://raw.githubusercontent.com/aasaam/information/master/logo/aasaam.svg">
+    <a href="https://aasaam.com" title="aasaam software development group">
+      <img alt="aasaam software development group" width="64" src="https://raw.githubusercontent.com/aasaam/information/master/logo/aasaam.svg">
+    </a>
     <br />
     aasaam software development group
   </p>

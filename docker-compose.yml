@@ -1,0 +1,9 @@
+# Copyright (c) 2021 aasaam software development group
+version: '3'
+
+services:
+  rest-captcha:
+    container_name: rest-captcha
+    image: aasaam/rest-captcha
+    # Run `docker run --rm aasaam/rest-captcha -h` for see available options
+    # command:

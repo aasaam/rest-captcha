@@ -2,11 +2,14 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -29,20 +32,31 @@ func interval(storage *Storage) {
 }
 
 func main() {
-	storage := NewStorage()
-	config := Config{}
-
 	var baseURL string
 	flag.StringVar(&baseURL, "base-url", "/", "Base URL for routes")
+
+	var username string
+	flag.StringVar(&username, "auth-username", "", "Basic authentication username")
+
+	var password string
+	flag.StringVar(&password, "auth-password", "", "Basic authentication password")
 
 	var listen string
 	flag.StringVar(&listen, "listen", "0.0.0.0:4000", "Application listen address")
 
-	testMode := flag.Bool("test", false, "Test m")
+	returnValue := flag.Bool("return-value", false, "Return value on generation")
 
 	flag.Parse()
 
-	config.Test = *testMode
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+
+	storage := NewStorage()
+	config := Config{}
+
+	config.ReturnValue = *returnValue
 
 	baseURL = strings.TrimRight(baseURL, "/")
 
@@ -74,6 +88,15 @@ func main() {
 			return nil
 		},
 	})
+
+	if username != "" && password != "" {
+		app.Use(basicauth.New(basicauth.Config{
+			Users: map[string]string{
+				username: password,
+			},
+			Realm: "REST Captcha",
+		}))
+	}
 
 	app.Get("/metrics", adaptor.HTTPHandler(handler))
 

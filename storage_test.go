@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
 
 func TestGenerateID(t *testing.T) {
 	id1 := GenerateID()
+	fmt.Println(id1)
 	id2 := GenerateID()
 	if id1 == id2 {
 		t.Errorf("id must be unique")
@@ -107,5 +109,6 @@ func BenchmarkGenerateID(b *testing.B) {
 func BenchmarkGenerateProblem(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		GenerateProblem(LevelMedium)
+
 	}
 }
