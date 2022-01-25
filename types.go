@@ -28,6 +28,7 @@ type StorageItem struct {
 // Config application config
 type Config struct {
 	ReturnValue bool
+	TestImage   bool
 }
 
 const (

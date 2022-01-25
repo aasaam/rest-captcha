@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
 
 func TestGenerateID(t *testing.T) {
 	id1 := GenerateID()
-	fmt.Println(id1)
 	id2 := GenerateID()
 	if id1 == id2 {
 		t.Errorf("id must be unique")

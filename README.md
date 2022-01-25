@@ -6,11 +6,9 @@
     Simple in memory multi language captcha generator server
   </p>
   <p>
-    <a href="https://gitlab.com/aasaam/rest-captcha/-/pipelines"><img alt="CI Pipeline" src="https://gitlab.com/aasaam/rest-captcha/badges/master/pipeline.svg"></a>
-    <a href="https://gitlab.com/aasaam/rest-captcha/"><img alt="Code Coverage" src="https://gitlab.com/aasaam/rest-captcha/badges/master/coverage.svg"></a>
+    <a href="https://github.com/aasaam/rest-captcha/actions/workflows/build.yml" target="_blank"><img src="https://github.com/aasaam/rest-captcha/actions/workflows/build.yml/badge.svg" alt="build" /></a>
     <a href="https://goreportcard.com/report/github.com/aasaam/rest-captcha"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/aasaam/rest-captcha"></a>
     <a href="https://hub.docker.com/r/aasaam/rest-captcha" target="_blank"><img src="https://img.shields.io/docker/image-size/aasaam/rest-captcha?label=docker%20image" alt="docker" /></a>
-    <a href="https://quay.io/repository/aasaam/rest-captcha" target="_blank"><img src="https://img.shields.io/badge/docker%20image-quay.io-blue" alt="quay.io" /></a>
     <a href="https://github.com/aasaam/rest-captcha/actions/workflows/docs.yml" target="_blank"><img src="https://github.com/aasaam/rest-captcha/actions/workflows/docs.yml/badge.svg" alt="docs" /></a>
     <a href="https://github.com/aasaam/rest-captcha/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/aasaam/rest-captcha"></a>
   </p>
@@ -21,14 +19,25 @@
 For see available options
 
 ```bash
-docker run --rm aasaam/rest-captcha -h
-# will show available options
+$ docker run --rm aasaam/rest-captcha -h
+
+# Usage of ./rest-captcha:
+#   -auth-password string
+#         Basic authentication password
+#   -auth-username string
+#         Basic authentication username
+#   -base-url string
+#         Base URL for routes (default "/")
+#   -listen string
+#         Application listen address (default "0.0.0.0:4000")
+#   -return-value
+#         Return value on generation
 ```
 
 It's generate captcha image via ID, base64 encoded image and value of captcha:
 
 ```bash
-curl -X POST -H 'Content-type: application/json' -d '{"lang":"fa","ttl":30, "level": "1"}' http://rest-captcha:4000/new
+curl -X POST -H 'Content-type: application/json' -d '{"lang":"fa","ttl":30, "level": "1", "quality": 10}' http://rest-captcha:4000/new
 ```
 
 ```bash

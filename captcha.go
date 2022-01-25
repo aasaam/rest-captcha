@@ -26,13 +26,16 @@ func GetRandomCaptchaFont(lang string) []byte {
 }
 
 // GenerateCaptcha return captcha number and base64 encoded image
-func GenerateCaptcha(item *StorageItem) string {
+func GenerateCaptcha(item *StorageItem, qualityInput int) string {
 	cap := captcha.New()
 	cap.SetSize(512, 128)
 	cap.AddFontFromBytes(GetRandomCaptchaFont(item.Language))
 
+	quality := minMaxDefault(qualityInput, 10, 95)
+
 	cap.SetFrontColor(color.RGBA{uint8(GetRandomNumber(0, 64)), uint8(GetRandomNumber(0, 64)), uint8(GetRandomNumber(0, 64)), 0xff})
 	cap.SetBkgColor(color.RGBA{uint8(GetRandomNumber(192, 256)), uint8(GetRandomNumber(192, 256)), uint8(GetRandomNumber(192, 256)), 0xff})
+
 	if item.Level == LevelEasy {
 		cap.SetDisturbance(32)
 	} else if item.Level == LevelHard {
@@ -43,9 +46,10 @@ func GenerateCaptcha(item *StorageItem) string {
 
 	img := cap.CreateCustom(item.IntlValue)
 	buf := new(bytes.Buffer)
+
 	jpeg.Encode(buf, img, &jpeg.Options{
-		Quality: 33,
+		Quality: quality,
 	})
 
-	return "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(buf.Bytes())
+	return base64.StdEncoding.EncodeToString(buf.Bytes())
 }

@@ -46,6 +46,8 @@ func main() {
 
 	returnValue := flag.Bool("return-value", false, "Return value on generation")
 
+	testImage := flag.Bool("test-image", false, "Expose /test-image for testing image")
+
 	flag.Parse()
 
 	flag.Usage = func() {
@@ -57,6 +59,7 @@ func main() {
 	config := Config{}
 
 	config.ReturnValue = *returnValue
+	config.TestImage = *testImage
 
 	baseURL = strings.TrimRight(baseURL, "/")
 
@@ -107,6 +110,12 @@ func main() {
 	app.Post(baseURL+"/solve", func(c *fiber.Ctx) error {
 		return HTTPSolve(c, &config, storage)
 	})
+
+	if config.TestImage {
+		app.Get(baseURL+"/test-image", func(c *fiber.Ctx) error {
+			return HTTPNewTestImage(c, &config, storage)
+		})
+	}
 
 	interval(storage)
 

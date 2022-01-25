@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http/httptest"
 	"testing"
 
@@ -19,6 +18,7 @@ func TestHTTPEndpoint1(t *testing.T) {
 	config := Config{}
 
 	config.ReturnValue = true
+	config.TestImage = true
 
 	app := fiber.New(fiber.Config{})
 
@@ -26,9 +26,20 @@ func TestHTTPEndpoint1(t *testing.T) {
 		return HTTPNew(c, &config, storage)
 	})
 
+	app.Get("/test-image", func(c *fiber.Ctx) error {
+		return HTTPNewTestImage(c, &config, storage)
+	})
+
 	app.Post("/solve", func(c *fiber.Ctx) error {
 		return HTTPSolve(c, &config, storage)
 	})
+
+	req0 := httptest.NewRequest("GET", "/test-image", bytes.NewReader([]byte("")))
+	resp0, _ := app.Test(req0)
+
+	if resp0.StatusCode != 200 {
+		t.Errorf("invalid response")
+	}
 
 	req1Body := NewRequest{
 		Lang:  "fa",
@@ -56,8 +67,6 @@ func TestHTTPEndpoint1(t *testing.T) {
 	}
 
 	respErr1, _ := app.Test(req1Err)
-
-	fmt.Println(respErr1.StatusCode)
 
 	if respErr1.StatusCode != 422 {
 		t.Errorf("invalid response")
@@ -117,6 +126,13 @@ func TestHTTPEndpoint2(t *testing.T) {
 		Level: "hard",
 	}
 
+	req1QualityBody := NewRequest{
+		Lang:    "en",
+		Quality: 100,
+		TTL:     3600,
+		Level:   "2",
+	}
+
 	invalidReq1Body := sampleJson{
 		Foo: "bar",
 	}
@@ -124,6 +140,11 @@ func TestHTTPEndpoint2(t *testing.T) {
 	req1BodyJSON, _ := json.Marshal(req1Body)
 
 	invalidReq1BodyJSON, _ := json.Marshal(invalidReq1Body)
+
+	req1QualityBodyJSON, _ := json.Marshal(req1QualityBody)
+	req1Quality := httptest.NewRequest("POST", "/new", bytes.NewReader(req1QualityBodyJSON))
+	req1Quality.Header.Set("Content-Type", "application/json")
+	app.Test(req1Quality)
 
 	req1 := httptest.NewRequest("POST", "/new", bytes.NewReader(req1BodyJSON))
 	req1.Header.Set("Content-Type", "application/json")
