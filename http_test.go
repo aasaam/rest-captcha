@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type sampleJson struct {
+type sampleJSON struct {
 	Foo string `json:"foo"`
 }
 
@@ -47,7 +47,7 @@ func TestHTTPEndpoint1(t *testing.T) {
 		Level: "EASY",
 	}
 
-	invalidReq1Body := sampleJson{
+	invalidReq1Body := sampleJSON{
 		Foo: "bar",
 	}
 
@@ -133,7 +133,7 @@ func TestHTTPEndpoint2(t *testing.T) {
 		Level:   "2",
 	}
 
-	invalidReq1Body := sampleJson{
+	invalidReq1Body := sampleJSON{
 		Foo: "bar",
 	}
 

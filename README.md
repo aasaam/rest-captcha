@@ -19,7 +19,7 @@
 For see available options
 
 ```bash
-$ docker run --rm aasaam/rest-captcha -h
+docker run --rm ghcr.io/aasaam/rest-captcha:latest -h
 
 # Usage of ./rest-captcha:
 #   -auth-password string
@@ -32,6 +32,8 @@ $ docker run --rm aasaam/rest-captcha -h
 #         Application listen address (default "0.0.0.0:4000")
 #   -return-value
 #         Return value on generation
+#   -test-image
+#         Expose /test-image for testing image
 ```
 
 It's generate captcha image via ID, base64 encoded image and value of captcha:
