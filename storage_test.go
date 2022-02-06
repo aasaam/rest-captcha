@@ -6,107 +6,107 @@ import (
 )
 
 func TestGenerateID(t *testing.T) {
-	id1 := GenerateID()
-	id2 := GenerateID()
+	id1 := generateID()
+	id2 := generateID()
 	if id1 == id2 {
 		t.Errorf("id must be unique")
 	}
 }
 func TestConvertStringToUInt64(t *testing.T) {
-	num := ConvertStringToUInt64("a")
+	num := convertStringToUInt64("a")
 	if num != 0 {
 		t.Errorf("num must be zero")
 	}
 }
 func TestGetLevel(t *testing.T) {
-	if GetLevel("1") != LevelEasy {
+	if getLevel("1") != levelEasy {
 		t.Errorf("invalid level")
 	}
-	if GetLevel("EaSy") != LevelEasy {
+	if getLevel("EaSy") != levelEasy {
 		t.Errorf("invalid level")
 	}
-	if GetLevel("2") != LevelHard {
+	if getLevel("2") != levelHard {
 		t.Errorf("invalid level")
 	}
-	if GetLevel("hArd") != LevelHard {
+	if getLevel("hArd") != levelHard {
 		t.Errorf("invalid level")
 	}
-	if GetLevel("else") != LevelMedium {
+	if getLevel("else") != levelMedium {
 		t.Errorf("invalid level")
 	}
 }
 
 func TestStorage1(t *testing.T) {
-	storage := NewStorage()
-	if storage.Count() != 0 {
+	storage := newStorage()
+	if storage.count() != 0 {
 		t.Errorf("count must be zero")
 	}
-	storage.CleanUp()
-	item := storage.NewItem(LevelHard, "fa", 3)
-	mustTrue := storage.Validate(item.ID, item.Value)
+	storage.cleanUp()
+	item := storage.newItem(levelHard, "fa", 3)
+	mustTrue := storage.validate(item.id, item.value)
 	if mustTrue != true {
 		t.Errorf("item validation must be true")
 	}
 }
 
 func TestStorage2(t *testing.T) {
-	storage := NewStorage()
-	item := storage.NewItem(LevelEasy, "ar", 3)
-	mustTrue := storage.Validate(item.ID, item.Value)
+	storage := newStorage()
+	item := storage.newItem(levelEasy, "ar", 3)
+	mustTrue := storage.validate(item.id, item.value)
 	if mustTrue != true {
 		t.Errorf("item validation must be true")
 	}
-	mustFalse := storage.Validate(item.ID, item.Value)
+	mustFalse := storage.validate(item.id, item.value)
 	if mustFalse != false {
 		t.Errorf("item validation must be false, double checked")
 	}
 }
 
 func TestStorage3(t *testing.T) {
-	storage := NewStorage()
-	item := storage.NewItem(LevelMedium, "en", 0)
+	storage := newStorage()
+	item := storage.newItem(levelMedium, "en", 0)
 	time.Sleep(1 * time.Second)
-	mustFalse := storage.Validate(item.ID, item.Value)
+	mustFalse := storage.validate(item.id, item.value)
 	if mustFalse != false {
 		t.Errorf("item validation must be false, expired")
 	}
 }
 
 func TestStorage4(t *testing.T) {
-	storage := NewStorage()
-	item1 := storage.NewItem(LevelMedium, "en", 0)
-	item2 := storage.NewItem(999, "fa", 3)
+	storage := newStorage()
+	item1 := storage.newItem(levelMedium, "en", 0)
+	item2 := storage.newItem(999, "fa", 3)
 	time.Sleep(1 * time.Second)
-	mustFalse := storage.Validate(item1.ID, item1.Value)
+	mustFalse := storage.validate(item1.id, item1.value)
 	if mustFalse != false {
 		t.Errorf("item validation must be false, expired")
 	}
-	mustTrue := storage.Validate(item2.ID, item2.Value)
+	mustTrue := storage.validate(item2.id, item2.value)
 	if mustTrue != true {
 		t.Errorf("item validation must be true")
 	}
 }
 
 func TestStorage5(t *testing.T) {
-	storage := NewStorage()
-	storage.NewItem(LevelMedium, "en", 0)
-	storage.NewItem(LevelMedium, "ar", 0)
-	storage.CleanUp()
-	storage.Count()
-	if storage.Count() != 0 {
+	storage := newStorage()
+	storage.newItem(levelMedium, "en", 0)
+	storage.newItem(levelMedium, "ar", 0)
+	storage.cleanUp()
+	storage.count()
+	if storage.count() != 0 {
 		t.Errorf("count must be zero")
 	}
 }
 
 func BenchmarkGenerateID(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenerateID()
+		generateID()
 	}
 }
 
 func BenchmarkGenerateProblem(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenerateProblem(LevelMedium)
+		generateProblem(levelMedium)
 
 	}
 }

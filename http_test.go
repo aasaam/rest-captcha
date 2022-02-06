@@ -14,24 +14,24 @@ type sampleJSON struct {
 }
 
 func TestHTTPEndpoint1(t *testing.T) {
-	storage := NewStorage()
-	config := Config{}
+	storage := newStorage()
+	config := config{}
 
-	config.ReturnValue = true
-	config.TestImage = true
+	config.returnValue = true
+	config.testImage = true
 
 	app := fiber.New(fiber.Config{})
 
 	app.Post("/new", func(c *fiber.Ctx) error {
-		return HTTPNew(c, &config, storage)
+		return httpNew(c, &config, storage)
 	})
 
 	app.Get("/test-image", func(c *fiber.Ctx) error {
-		return HTTPNewTestImage(c, &config, storage)
+		return httpNewTestImage(c, &config, storage)
 	})
 
 	app.Post("/solve", func(c *fiber.Ctx) error {
-		return HTTPSolve(c, &config, storage)
+		return httpSolve(c, &config, storage)
 	})
 
 	req0 := httptest.NewRequest("GET", "/test-image", bytes.NewReader([]byte("")))
@@ -41,7 +41,7 @@ func TestHTTPEndpoint1(t *testing.T) {
 		t.Errorf("invalid response")
 	}
 
-	req1Body := NewRequest{
+	req1Body := newRequest{
 		Lang:  "fa",
 		TTL:   10,
 		Level: "EASY",
@@ -76,11 +76,11 @@ func TestHTTPEndpoint1(t *testing.T) {
 	buf.ReadFrom(resp1.Body)
 	str := buf.String()
 
-	var newBody NewResponse
+	var newBody newResponse
 
 	json.Unmarshal([]byte(str), &newBody)
 
-	req2Body := SolveRequest{
+	req2Body := solveRequest{
 		ID:    newBody.ID,
 		Value: newBody.Value,
 	}
@@ -105,28 +105,28 @@ func TestHTTPEndpoint1(t *testing.T) {
 	}
 }
 func TestHTTPEndpoint2(t *testing.T) {
-	storage := NewStorage()
-	config := Config{}
+	storage := newStorage()
+	config := config{}
 
-	config.ReturnValue = false
+	config.returnValue = false
 
 	app := fiber.New(fiber.Config{})
 
 	app.Post("/new", func(c *fiber.Ctx) error {
-		return HTTPNew(c, &config, storage)
+		return httpNew(c, &config, storage)
 	})
 
 	app.Post("/solve", func(c *fiber.Ctx) error {
-		return HTTPSolve(c, &config, storage)
+		return httpSolve(c, &config, storage)
 	})
 
-	req1Body := NewRequest{
+	req1Body := newRequest{
 		Lang:  "fa",
 		TTL:   86400,
 		Level: "hard",
 	}
 
-	req1QualityBody := NewRequest{
+	req1QualityBody := newRequest{
 		Lang:    "en",
 		Quality: 100,
 		TTL:     3600,
@@ -167,7 +167,7 @@ func TestHTTPEndpoint2(t *testing.T) {
 	buf.ReadFrom(resp1.Body)
 	str := buf.String()
 
-	var newBody NewResponse
+	var newBody newResponse
 
 	e := json.Unmarshal([]byte(str), &newBody)
 
@@ -175,7 +175,7 @@ func TestHTTPEndpoint2(t *testing.T) {
 		t.Errorf("value must be zero")
 	}
 
-	req2Body := SolveRequest{
+	req2Body := solveRequest{
 		ID:    newBody.ID,
 		Value: 1,
 	}

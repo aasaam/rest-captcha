@@ -15,61 +15,57 @@ import (
 )
 
 var safeStringRegex = regexp.MustCompile(`[^a-zA-Z0-9]`)
+var zeroStringRegex = regexp.MustCompile(`[0]{1}`)
 
-// NewStorage will return new storage pool
-func NewStorage() *Storage {
-	storage := Storage{}
+func newStorage() *storage {
+	storage := storage{}
 	storage.values = make(map[string]uint64)
 	storage.expire = make(map[string]int64)
 	return &storage
 }
 
-// Count will return number of
-func (s *Storage) Count() int {
+func (s *storage) count() int {
 	return len(s.values)
 }
 
-// NewItem will register new StorageItem and return it
-func (s *Storage) NewItem(level int, lang string, ttl int64) *StorageItem {
+func (s *storage) newItem(level int, lang string, ttl int64) *storageItem {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	expireTime := time.Now()
 	expireTime = expireTime.Add(time.Second * time.Duration(ttl))
 
-	id := GenerateID()
-	value := GenerateProblem(level)
-	intlValue := ConvertUInt64ToString(value)
+	id := generateID()
+	value := generateProblem(level)
+	intlValue := convertUInt64ToString(value)
 
 	if lang == "fa" {
 		intlValue = message.NewPrinter(language.Persian).Sprintf("%v", number.Decimal(value, number.NoSeparator()))
 	} else if lang == "ar" {
 		intlValue = message.NewPrinter(language.Arabic).Sprintf("%v", number.Decimal(value, number.NoSeparator()))
 	}
-	item := StorageItem{ID: id, Value: value, Language: lang, IntlValue: intlValue, Level: level, Expire: expireTime}
+	item := storageItem{id: id, value: value, language: lang, intlValue: intlValue, level: level, expire: expireTime}
 	s.expire[id] = expireTime.Unix()
 	s.values[id] = value
 	return &item
 }
 
-// Validate id via input value
-func (s *Storage) Validate(id string, value uint64) bool {
+func (s *storage) validate(id string, value uint64) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if exp, ok := s.expire[id]; ok {
 		if exp >= time.Now().Unix() && s.values[id] == value {
 			delete(s.expire, id)
 			delete(s.values, id)
-			PrometheusValidTotal.Inc()
+			prometheusValidTotal.Inc()
 			return true
 		}
 	}
-	PrometheusInValidTotal.Inc()
+	prometheusInValidTotal.Inc()
 	return false
 }
 
-// CleanUp remove expired
-func (s *Storage) CleanUp() {
+func (s *storage) cleanUp() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	now := time.Now().Unix()
@@ -81,8 +77,7 @@ func (s *Storage) CleanUp() {
 	}
 }
 
-// GenerateID return random id for each captcha
-func GenerateID() string {
+func generateID() string {
 	b1 := make([]byte, 16)
 	_, err := rand.Read(b1)
 
@@ -93,36 +88,34 @@ func GenerateID() string {
 	return safeStringRegex.ReplaceAllString(base64.StdEncoding.EncodeToString(b1), "")[0:12]
 }
 
-// GenerateProblem generate number problem
-func GenerateProblem(level int) uint64 {
+func generateProblem(level int) uint64 {
 	var num int
 	var min int
 	var max int
-	if level == LevelEasy {
+	if level == levelEasy {
 		min = 10000
 		max = 99999
-	} else if level == LevelHard {
+	} else if level == levelHard {
 		min = 1000000
 		max = 9999999
 	} else { // medium is default
 		min = 100000
 		max = 999999
 	}
-	num = GetRandomNumber(min, max)
-	randomNoneZero := GetRandomNumber(1, 9)
+	num = getRandomNumber(min, max)
 	numberString := strconv.Itoa(num)
-	numberString = strings.ReplaceAll(numberString, "0", strconv.Itoa(randomNoneZero))
-	return ConvertStringToUInt64(numberString)
+	numberString = zeroStringRegex.ReplaceAllStringFunc(numberString, func(m string) string {
+		return strconv.Itoa(getRandomNumber(1, 9))
+	})
+	return convertStringToUInt64(numberString)
 }
 
-// GetRandomNumber random number between min and max
-func GetRandomNumber(min int, max int) int {
+func getRandomNumber(min int, max int) int {
 	math_rand.Seed(time.Now().UnixNano())
 	return math_rand.Intn(max-min) + min
 }
 
-// ConvertStringToUInt64 string to uint64
-func ConvertStringToUInt64(str string) uint64 {
+func convertStringToUInt64(str string) uint64 {
 	value, e := strconv.ParseInt(str, 10, 64)
 	if e != nil {
 		return 0
@@ -130,18 +123,16 @@ func ConvertStringToUInt64(str string) uint64 {
 	return uint64(value)
 }
 
-// ConvertUInt64ToString uint64 to string
-func ConvertUInt64ToString(in uint64) string {
+func convertUInt64ToString(in uint64) string {
 	return strconv.FormatUint(in, 10)
 }
 
-// GetLevel parse level string
-func GetLevel(str string) int {
+func getLevel(str string) int {
 	if str == "1" || strings.ToUpper(str) == "EASY" {
-		return LevelEasy
+		return levelEasy
 	}
 	if str == "2" || strings.ToUpper(str) == "HARD" {
-		return LevelHard
+		return levelHard
 	}
-	return LevelMedium
+	return levelMedium
 }

@@ -5,21 +5,21 @@ import (
 )
 
 func TestGenerateCaptcha(t *testing.T) {
-	storage := NewStorage()
-	storage.CleanUp()
+	storage := newStorage()
+	storage.cleanUp()
 
-	itemFa := storage.NewItem(LevelEasy, "fa", 3)
-	itemAr := storage.NewItem(LevelMedium, "ar", 3)
-	itemEn := storage.NewItem(LevelHard, "en", 3)
+	itemFa := storage.newItem(levelEasy, "fa", 3)
+	itemAr := storage.newItem(levelMedium, "ar", 3)
+	itemEn := storage.newItem(levelHard, "en", 3)
 
-	GenerateCaptcha(itemFa, 30)
-	GenerateCaptcha(itemAr, 30)
-	GenerateCaptcha(itemEn, 10)
+	generateCaptcha(itemFa, 30)
+	generateCaptcha(itemAr, 30)
+	generateCaptcha(itemEn, 10)
 }
 
 func BenchmarkGenerateCaptcha(b *testing.B) {
-	storage := NewStorage()
+	storage := newStorage()
 	for i := 0; i < b.N; i++ {
-		GenerateCaptcha(storage.NewItem(LevelHard, "fa", 3), 20)
+		generateCaptcha(storage.newItem(levelHard, "fa", 3), 20)
 	}
 }

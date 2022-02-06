@@ -30,12 +30,11 @@ import (
 // total size: {total_size}KB
 
 {embeds}
-
 {var_list_all}
 """
 
 embed_template = """//go:embed {path}\nvar {embed_var} []byte"""
-var_list_template = """// CaptchaFonts{lang} list of embed fonts for {lang}\nvar CaptchaFonts{lang} = [][]byte{{{embed_var}}}"""
+var_list_template = """var captchaFonts{lang} = [][]byte{{{embed_var}}}"""
 lang_index = {}
 embeds = []
 var_list = {}
@@ -89,8 +88,7 @@ for lang in languages:
 var_list_all = []
 for lang, embed_var in var_list.items():
   langName = lang[0].upper() + lang[1:]
-  var_list_all.append(var_list_template.format(lang=langName,embed_var=",".join(embed_var)))
-  var_list_all.append("")
+  var_list_all.append(var_list_template.format(lang=langName,embed_var=", ".join(embed_var)))
 
 captcha_fonts = captcha_fonts_template.format(
   generate_time=datetime.datetime.now().strftime("%Y/%m/%d %H:%M"),

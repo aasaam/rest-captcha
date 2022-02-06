@@ -8,49 +8,45 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// NewRequest request for new captcha
-type NewRequest struct {
+type newRequest struct {
 	Lang    string `json:"lang,omitempty"`
 	TTL     int64  `json:"ttl"`
 	Quality int    `json:"quality"`
 	Level   string `json:"level,omitempty"`
 }
 
-// NewResponse response of generated captcha
-type NewResponse struct {
+type newResponse struct {
 	ID     string `json:"id"`
 	Image  string `json:"image"`
 	Expire string `json:"expire"`
 	Value  uint64 `json:"value"`
 }
 
-// SolveRequest solve request
-type SolveRequest struct {
+type solveRequest struct {
 	ID    string `json:"id"`
 	Value uint64 `json:"value"`
 }
 
-// HTTPNewTestImage fiber handler for test image of captcha
-func HTTPNewTestImage(c *fiber.Ctx, config *Config, storage *Storage) error {
-	r := new(NewRequest)
+func httpNewTestImage(c *fiber.Ctx, config *config, storage *storage) error {
+	r := new(newRequest)
 
 	r.Lang = c.Query("lang", "en")
 	quality, _ := strconv.Atoi(c.Query("q", "0"))
 
 	r.Level = c.Query("level", "0")
 
-	item := storage.NewItem(GetLevel(r.Level), r.Lang, r.TTL)
-	image := GenerateCaptcha(item, quality)
+	item := storage.newItem(getLevel(r.Level), r.Lang, r.TTL)
+	image := generateCaptcha(item, quality)
 
 	imageByte, _ := base64.StdEncoding.DecodeString(image)
+	c.Set("X-Value", strconv.Itoa(int(item.value)))
 	c.Set("Content-Type", "image/jpeg")
 
 	return c.Send(imageByte)
 }
 
-// HTTPNew fiber handler for new captcha
-func HTTPNew(c *fiber.Ctx, config *Config, storage *Storage) error {
-	r := new(NewRequest)
+func httpNew(c *fiber.Ctx, config *config, storage *storage) error {
+	r := new(newRequest)
 
 	if err := c.BodyParser(r); err != nil {
 		return err
@@ -63,29 +59,28 @@ func HTTPNew(c *fiber.Ctx, config *Config, storage *Storage) error {
 
 	r.TTL = minMaxDefault64(r.TTL, 30, 600)
 
-	item := storage.NewItem(GetLevel(r.Level), r.Lang, r.TTL)
-	image := GenerateCaptcha(item, quality)
+	item := storage.newItem(getLevel(r.Level), r.Lang, r.TTL)
+	image := generateCaptcha(item, quality)
 
-	response := NewResponse{ID: item.ID, Image: "data:image/jpeg;base64," + image, Expire: item.Expire.Format(time.RFC3339), Value: 0}
+	response := newResponse{ID: item.id, Image: "data:image/jpeg;base64," + image, Expire: item.expire.Format(time.RFC3339), Value: 0}
 
-	if config.ReturnValue {
-		response.Value = item.Value
+	if config.returnValue {
+		response.Value = item.value
 	}
 
-	PrometheusShowTotal.Inc()
+	prometheusShowTotal.Inc()
 
 	return c.JSON(response)
 }
 
-// HTTPSolve fiber handler for solve captcha
-func HTTPSolve(c *fiber.Ctx, config *Config, storage *Storage) error {
-	r := new(SolveRequest)
+func httpSolve(c *fiber.Ctx, config *config, storage *storage) error {
+	r := new(solveRequest)
 
 	if err := c.BodyParser(r); err != nil {
 		return err
 	}
 
-	valid := storage.Validate(r.ID, r.Value)
+	valid := storage.validate(r.ID, r.Value)
 
 	if valid {
 		return c.Status(200).JSON(true)

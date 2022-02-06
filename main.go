@@ -10,19 +10,18 @@ import (
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func interval(storage *Storage) {
+func interval(storage *storage) {
 	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				storage.CleanUp()
-				PrometheusStorageCount.Set(float64(storage.Count()))
+				storage.cleanUp()
+				prometheusStorageCount.Set(float64(storage.count()))
 			case <-quit:
 				ticker.Stop()
 				return
@@ -55,18 +54,15 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	storage := NewStorage()
-	config := Config{}
+	storage := newStorage()
+	config := config{}
 
-	config.ReturnValue = *returnValue
-	config.TestImage = *testImage
+	config.returnValue = *returnValue
+	config.testImage = *testImage
 
 	baseURL = strings.TrimRight(baseURL, "/")
 
-	promRegistry := prometheus.NewRegistry()
-	promRegistry.MustRegister(PrometheusStorageCount)
-	promRegistry.MustRegister(PrometheusInValidTotal)
-	promRegistry.MustRegister(PrometheusValidTotal)
+	promRegistry := getPrometheusRegistry()
 
 	handler := promhttp.HandlerFor(promRegistry, promhttp.HandlerOpts{})
 
@@ -104,16 +100,16 @@ func main() {
 	app.Get("/metrics", adaptor.HTTPHandler(handler))
 
 	app.Post(baseURL+"/new", func(c *fiber.Ctx) error {
-		return HTTPNew(c, &config, storage)
+		return httpNew(c, &config, storage)
 	})
 
 	app.Post(baseURL+"/solve", func(c *fiber.Ctx) error {
-		return HTTPSolve(c, &config, storage)
+		return httpSolve(c, &config, storage)
 	})
 
-	if config.TestImage {
+	if config.testImage {
 		app.Get(baseURL+"/test-image", func(c *fiber.Ctx) error {
-			return HTTPNewTestImage(c, &config, storage)
+			return httpNewTestImage(c, &config, storage)
 		})
 	}
 
