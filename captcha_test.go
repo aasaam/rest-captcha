@@ -5,7 +5,7 @@ import (
 )
 
 func TestGenerateCaptcha(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	storage.cleanUp()
 
 	itemFa := storage.newItem(levelEasy, "fa", 3)
@@ -18,7 +18,7 @@ func TestGenerateCaptcha(t *testing.T) {
 }
 
 func BenchmarkGenerateCaptcha(b *testing.B) {
-	storage := newStorage()
+	storage := newStorage(true)
 	for i := 0; i < b.N; i++ {
 		generateCaptcha(storage.newItem(levelHard, "fa", 3), 20)
 	}

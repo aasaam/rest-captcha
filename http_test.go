@@ -14,7 +14,7 @@ type sampleJSON struct {
 }
 
 func TestHTTPEndpoint1(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	config := config{}
 
 	config.returnValue = true
@@ -105,7 +105,7 @@ func TestHTTPEndpoint1(t *testing.T) {
 	}
 }
 func TestHTTPEndpoint2(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	config := config{}
 
 	config.returnValue = false

@@ -37,7 +37,7 @@ func TestGetLevel(t *testing.T) {
 }
 
 func TestStorage1(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	if storage.count() != 0 {
 		t.Errorf("count must be zero")
 	}
@@ -50,7 +50,7 @@ func TestStorage1(t *testing.T) {
 }
 
 func TestStorage2(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	item := storage.newItem(levelEasy, "ar", 3)
 	mustTrue := storage.validate(item.id, item.value)
 	if mustTrue != true {
@@ -63,7 +63,7 @@ func TestStorage2(t *testing.T) {
 }
 
 func TestStorage3(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	item := storage.newItem(levelMedium, "en", 0)
 	time.Sleep(1 * time.Second)
 	mustFalse := storage.validate(item.id, item.value)
@@ -73,7 +73,7 @@ func TestStorage3(t *testing.T) {
 }
 
 func TestStorage4(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	item1 := storage.newItem(levelMedium, "en", 0)
 	item2 := storage.newItem(999, "fa", 3)
 	time.Sleep(1 * time.Second)
@@ -88,11 +88,20 @@ func TestStorage4(t *testing.T) {
 }
 
 func TestStorage5(t *testing.T) {
-	storage := newStorage()
+	storage := newStorage(true)
 	storage.newItem(levelMedium, "en", 0)
 	storage.newItem(levelMedium, "ar", 0)
 	storage.cleanUp()
 	storage.count()
+	if storage.count() != 0 {
+		t.Errorf("count must be zero")
+	}
+}
+
+func TestStorage6(t *testing.T) {
+	storage := newStorage(false)
+	storage.newItem(levelMedium, "en", 0)
+	storage.newItem(levelMedium, "ar", 0)
 	if storage.count() != 0 {
 		t.Errorf("count must be zero")
 	}

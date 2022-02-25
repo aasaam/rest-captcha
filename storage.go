@@ -17,8 +17,9 @@ import (
 var safeStringRegex = regexp.MustCompile(`[^a-zA-Z0-9]`)
 var zeroStringRegex = regexp.MustCompile(`[0]{1}`)
 
-func newStorage() *storage {
+func newStorage(active bool) *storage {
 	storage := storage{}
+	storage.active = active
 	storage.values = make(map[string]uint64)
 	storage.expire = make(map[string]int64)
 	return &storage
@@ -29,11 +30,10 @@ func (s *storage) count() int {
 }
 
 func (s *storage) newItem(level int, lang string, ttl int64) *storageItem {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	expireTime := time.Now()
-	expireTime = expireTime.Add(time.Second * time.Duration(ttl))
+	if s.active {
+		s.mu.Lock()
+		defer s.mu.Unlock()
+	}
 
 	id := generateID()
 	value := generateProblem(level)
@@ -44,9 +44,17 @@ func (s *storage) newItem(level int, lang string, ttl int64) *storageItem {
 	} else if lang == "ar" {
 		intlValue = message.NewPrinter(language.Arabic).Sprintf("%v", number.Decimal(value, number.NoSeparator()))
 	}
-	item := storageItem{id: id, value: value, language: lang, intlValue: intlValue, level: level, expire: expireTime}
-	s.expire[id] = expireTime.Unix()
-	s.values[id] = value
+
+	item := storageItem{id: id, value: value, language: lang, intlValue: intlValue, level: level}
+
+	if s.active {
+		expireTime := time.Now()
+		expireTime = expireTime.Add(time.Second * time.Duration(ttl))
+		item.expire = expireTime
+		s.expire[id] = expireTime.Unix()
+		s.values[id] = value
+	}
+
 	return &item
 }
 

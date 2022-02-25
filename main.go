@@ -41,9 +41,9 @@ func main() {
 	flag.StringVar(&password, "auth-password", "", "Basic authentication password")
 
 	var listen string
-	flag.StringVar(&listen, "listen", "0.0.0.0:4000", "Application listen address")
+	flag.StringVar(&listen, "listen", "127.0.0.1:4000", "Application listen address")
 
-	returnValue := flag.Bool("return-value", false, "Return value on generation")
+	returnValue := flag.Bool("return-value", false, "Return value on generation and do not save for later validation")
 
 	testImage := flag.Bool("test-image", false, "Expose /test-image for testing image")
 
@@ -54,11 +54,11 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	storage := newStorage()
 	config := config{}
-
 	config.returnValue = *returnValue
 	config.testImage = *testImage
+
+	storage := newStorage(config.returnValue == false)
 
 	baseURL = strings.TrimRight(baseURL, "/")
 
@@ -113,7 +113,9 @@ func main() {
 		})
 	}
 
-	interval(storage)
+	if config.returnValue == false {
+		interval(storage)
+	}
 
 	e := app.Listen(listen)
 	if e != nil {

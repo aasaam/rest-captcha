@@ -6,6 +6,7 @@ import (
 )
 
 type storage struct {
+	active bool
 	mu     sync.Mutex
 	values map[string]uint64
 	expire map[string]int64
