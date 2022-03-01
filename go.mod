@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/afocus/captcha v0.0.0-20191010092841-4bd1f21c8868
-	github.com/gofiber/adaptor/v2 v2.1.18
+	github.com/gofiber/adaptor/v2 v2.1.19
 	github.com/gofiber/fiber/v2 v2.28.0
 	github.com/prometheus/client_golang v1.12.1
 	github.com/urfave/cli/v2 v2.3.0
