@@ -7,7 +7,7 @@ require (
 	github.com/gofiber/adaptor/v2 v2.1.30
 	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/prometheus/client_golang v1.14.0
-	github.com/urfave/cli/v2 v2.23.5
+	github.com/urfave/cli/v2 v2.23.6
 	golang.org/x/text v0.4.0
 )
 
