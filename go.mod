@@ -8,7 +8,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/prometheus/client_golang v1.14.0
 	github.com/urfave/cli/v2 v2.23.5
-	golang.org/x/text v0.4.0
+	golang.org/x/text v0.8.0
 )
 
 require (
@@ -33,6 +33,6 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
-	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
